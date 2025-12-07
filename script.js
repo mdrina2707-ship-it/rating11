@@ -1,56 +1,56 @@
-function loadRating(owner){
-    let key = "rating_" + owner;
-    let r = JSON.parse(localStorage.getItem(key)) || {};
-    // Инициализируем всех учеников
-    students.forEach(n => {
-        if (!(n in r)) r[n] = 0;
-    });
-    return r;
+const owner = "karina"; // или "sofia"
+
+function loadRating() {
+    const saved = localStorage.getItem("rating_" + owner);
+    let rating = {};
+    students.forEach(s => rating[s] = 0); // инициализация всех учеников
+    if(saved){
+        const parsed = JSON.parse(saved);
+        Object.keys(parsed).forEach(k => { rating[k] = parsed[k]; });
+    }
+    return rating;
 }
 
-function saveRating(owner, r){
-    localStorage.setItem("rating_" + owner, JSON.stringify(r));
+function saveRating(rating){
+    localStorage.setItem("rating_" + owner, JSON.stringify(rating));
 }
 
-function renderRating(owner, editable){
+function renderRating(editable = true){
     const container = document.getElementById("ratingList");
-    const rating = loadRating(owner);
+    const rating = loadRating();
     container.innerHTML = "";
 
     // Сортировка по баллам
-    const sortedNames = Object.keys(rating).sort((a,b) => rating[b] - rating[a]);
+    const sorted = Object.keys(rating).sort((a,b)=>rating[b]-rating[a]);
 
-    sortedNames.forEach(name => {
+    sorted.forEach(name=>{
         const div = document.createElement("div");
         div.className = "student";
-
-        // Имя кликабельное
         div.innerHTML = `<span class="clickable" onclick="openComments('${name}')">${name}</span>
-                         <span class="score">${rating[name]}</span>`;
-
+                         <span>${rating[name]}</span>`;
         if(editable){
             div.innerHTML += `<div class="buttons">
-                <button onclick="changeScore('${owner}','${name}',2)">+2</button>
-                <button onclick="changeScore('${owner}','${name}',1)">+1</button>
-                <button onclick="changeScore('${owner}','${name}',-1)">-1</button>
-                <button onclick="changeScore('${owner}','${name}',-2)">-2</button>
+                <button onclick="changeScore('${name}',2)">+2</button>
+                <button onclick="changeScore('${name}',1)">+1</button>
+                <button onclick="changeScore('${name}',-1)">-1</button>
+                <button onclick="changeScore('${name}',-2)">-2</button>
             </div>`;
         }
-
         container.appendChild(div);
     });
 }
 
-// Изменение баллов с возможностью добавить комментарий
-function changeScore(owner, name, delta){
-    const r = loadRating(owner);
-    r[name] += delta;
-    saveRating(owner, r);
-    renderRating(owner, true);
+function changeScore(name, delta){
+    const rating = loadRating();
+    rating[name] += delta;
+    saveRating(rating);
+    renderRating(true);
 }
 
-// Переход на страницу комментариев
 function openComments(name){
-    localStorage.setItem("currentCommentStudent", name); // сохраняем, чтобы comments.html знала
+    localStorage.setItem("currentCommentStudent", name);
     window.location.href = "comments.html";
 }
+
+// Запуск
+renderRating(true);
