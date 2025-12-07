@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кабинет Карины</title>
+<link rel="stylesheet" href="style.css">
+<script src="students.js"></script>
+<script src="script.js"></script>
+</head>
+<body>
+<h1>Кабинет Карины Мансуровой</h1>
+<button onclick="viewSofya()">Посмотреть рейтинг Софьи</button>
+<div id="ratingList"></div>
+<script>
+const owner = "karina";
+renderRating(true);
+function viewSofya(){window.location.href='view_sofia.html';}
+</script>
+</body>
+</html>
